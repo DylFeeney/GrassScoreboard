@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<script type="text/javascript">
+    // when page is ready
+    $(document).ready(function() {
+         // on form submit
+        $("#form").on('submit', function() {
+            // to each unchecked checkbox
+            $(this + 'input[type=checkbox]:not(:checked)').each(function () {
+                // set value 0 and check it
+                $(this).attr('checked', true).val(0);
+            });
+        })
+    })
+</script>
+
+<form action = "http://127.0.0.1:5000/round-information" method="POST" id="form">
+    {% for i in range (0, number_of_players) %}
+        <h2>{{ names[i] }}</h2>
+
+        <input type="hidden" id="user_name" name="user_name" value="{{ names[i] }}">
+
+        <label for="protected_peddle">Protected peddle Value</label><br>
+        <input type="number" id="protected_peddle" name="protected_peddle"><br>
+        <label for="unprotected_peddle">Unprotected peddle Value</label><br>
+        <input type="number" id="unprotected_peddle" name="unprotected_peddle"><br>
+        <label for="highest_peddle_in_hand">Highest peddle Card in Hand</label><br>
+        <input type="number" id="highest_peddle_in_hand" name="highest_peddle_in_hand"><br>
+        <br>
+
+        <input type="hidden" id="has_banker" name="has_banker" value="0">
+        <input type="checkbox" id="has_banker" name="has_banker" value="1">
+        <label for="has_banker">Banker Card</label>
+        <br>
+
+        <h3>Penalties</h3>
+        <input type="hidden" id="has_sold_out" name="has_sold_out" value="0">
+        <input type="checkbox" id="has_sold_out" name="has_sold_out" value="1">
+        <label for="has_sold_out">Sold Out Card</label><br>
+
+        <input type="hidden" id="has_double_crossed" name="has_double_crossed" value="0">
+        <input type="checkbox" id="has_double_crossed" name="has_double_crossed" value="1">
+        <label for="has_double_crossed">Doublecrossed Card</label><br>
+
+        <input type="hidden" id="has_utterly_wiped_out" name="has_utterly_wiped_out" value="0">
+        <input type="checkbox" id="has_utterly_wiped_out" name="has_utterly_wiped_out" value="1">
+        <label for="has_utterly_wiped_out">Utterly Wiped Out Card</label><br>
+        <br>
+    {%  endfor %}
+<br>
+<input type="submit" value="Submit">
+</form>
+
+</body>
+</html>

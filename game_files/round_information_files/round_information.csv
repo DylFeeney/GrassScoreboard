@@ -1,0 +1,5 @@
+user_name,protected_peddle,unprotected_peddle,highest_peddle_in_hand,has_banker,has_sold_out,has_double_crossed,has_utterly_wiped_out
+DYLAN,50000,45000,5000,0,1,0,0
+VICKY,25000,50000,50000,0,0,1,1
+DECLAN,75000,5000,25000,0,0,0,0
+PETER,50000,45000,5000,0,1,0,0
