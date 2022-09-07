@@ -2,9 +2,42 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Index</title>
+    <title>Grass Game Manager</title>
+    <link rel="stylesheet" href="static/resources/bootstrap/css/bootstrap.min.css">
 </head>
 <body>
-<h1>Index</h1>
+    <div class="container">
+        <div class="row justify-content-md-center">
+            <h1>Grass Game Manager</h1>
+        </div>
+        <div class="row justify-content-md-center mt-2 mb-2">
+            <button type="button" id="new_round" class="btn btn-secondary">New round</button>
+        </div>
+        <div class="row justify-content-md-center mt-2 mb-2">
+            <a href="http://127.0.0.1:5000/round-information">
+                <button type="button" id="enter_round" class="btn btn-secondary">Enter round information</button>
+            </a>
+        </div>
+        <div class="row justify-content-md-center mt-2 mb-2">
+            <a href="http://127.0.0.1:5000/setup">
+                <button type="button" id="enter_round" class="btn btn-secondary">Player Setup</button>
+            </a>
+        </div>
+    </div>
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type=text/javascript>
+        $(function() {
+          $('#new_round').on('click', function(e) {
+            e.preventDefault()
+            $.getJSON('/background_process_test',
+                function(data) {
+            });
+            alert("New round");
+            return false;
+          });
+        });
+</script>
+
 </body>
 </html>

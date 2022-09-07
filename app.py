@@ -1,7 +1,7 @@
 from flask import Flask, render_template
 import csv
 from game_setup import game_setup_page
-from round import round_information_page, calculate_round_page
+from round import round_information_page, calculate_round_page, round_information
 
 app = Flask(__name__)
 app.register_blueprint(game_setup_page)
@@ -13,6 +13,10 @@ app.register_blueprint(calculate_round_page)
 def hello_world():  # put application's code here
     return render_template('index.html')
 
+
+@app.route('/round_information_proxy')
+def round_information_proxy():
+    round_information()
 
 @app.route('/csv')
 def print_csv():
@@ -45,6 +49,13 @@ def generate_round_info_file():
                              'has_banker', 'has_sold_out', 'has_double_crossed', 'has_utterly_wiped_out']
     writer.writerow(round_information_row)
     f.close()
+
+
+#background process happening without any refreshing
+@app.route('/background_process_test')
+def background_process_test():
+    print ("Hello")
+    return ("nothing")
 
 
 if __name__ == '__main__':

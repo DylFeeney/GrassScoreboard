@@ -12,7 +12,7 @@ def game_setup():
         add_user_to_game(processed_user_name)
     df = pd.read_csv('game_files/user_info.csv')
     names = df['user_name']
-    print(names)
+    print(names.values)
     return render_template('setup.html', user_names=names)
 
 

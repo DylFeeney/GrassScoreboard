@@ -2,9 +2,77 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Grass Round Information</title>
+    <link rel="stylesheet" href="static/resources/bootstrap/css/bootstrap.min.css">
 </head>
 <body>
+<div class="container">
+    <div class="row">
+        <div class="row justify-content-md-center mt-2 mb-2">
+            <a href="http://127.0.0.1:5000/">
+                <button type="button" class="btn btn-secondary">Return to main menu</button>
+            </a>
+        </div>
+    </div>
+    <div class="container">
+        <form class="pb-5" action = "http://127.0.0.1:5000/round-information" method="POST" id="form">
+            {% for i in range (0, number_of_players) %}
+                <div class="row">
+                    <h2>{{ names[i] }}</h2>
+                </div>
+                <div class="row">
+                    <input type="hidden" id="user_name" name="user_name" value="{{ names[i] }}">
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="protected_peddle">Protected Peddle Value</label>
+                            <input type="number" class="form-control" id="protected_peddle" name="protected_peddle" placeholder="Enter protected peddle value">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="unprotected_peddle">Unprotected Peddle Value</label>
+                            <input type="number" class="form-control" id="unprotected_peddle" name="unprotected_peddle" placeholder="Enter unprotected peddle value">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="highest_peddle_in_hand">Highest Peddle Card in Hand</label>
+                            <input type="number" class="form-control" id="highest_peddle_in_hand" name="highest_peddle_in_hand" placeholder="Enter highest peddle card in your hand">
+                        </div>
+                        <br>
+                    </div>
+                    <div class="col">
+                        <h3>Rewards</h3>
+                        <input type="hidden" id="has_banker" name="has_banker" value="0">
+                        <input type="checkbox" id="has_banker" name="has_banker" value="1">
+                        <label for="has_banker">Banker Card</label>
+                        <br>
+
+                        <h3>Penalties</h3>
+                        <div class="form-check">
+                            <input type="hidden" id="has_sold_out1" name="has_sold_out" value="0">
+                            <input class="form-check-input" type="checkbox" id="has_sold_out1" name="has_sold_out" value="1">
+                            <label class="form-check-label" for="has_sold_out1">Sold Out</label>
+                        </div>
+                        <div class="form-check">
+                            <input type="hidden" id="has_double_crossed" name="has_double_crossed" value="0">
+                            <input class="form-check-input" type="checkbox" id="has_double_crossed" name="has_double_crossed" value="1">
+                            <label class="form-check-label" for="has_double_crossed">Doublecrossed</label>
+                        </div>
+                        <div class="form-check">
+                            <input type="hidden" id="has_utterly_wiped_out" name="has_utterly_wiped_out" value="0">
+                            <input class="form-check-input" type="checkbox" id="has_utterly_wiped_out" name="has_utterly_wiped_out" value="1">
+                            <label class="form-check-label" for="has_utterly_wiped_out">Sold Out</label>
+                        </div>
+                    </div>
+                </div>
+                <hr/>
+            {%  endfor %}
+        <br>
+        <div class="row justify-content-md-center mt-2 mb-2">
+            <button type="submit" class="btn btn-success" value="Submit">Submit round information</button>
+        </div>
+        </form>
+    </div>
+</div>
 
 <script type="text/javascript">
     // when page is ready
@@ -20,42 +88,6 @@
     })
 </script>
 
-<form action = "http://127.0.0.1:5000/round-information" method="POST" id="form">
-    {% for i in range (0, number_of_players) %}
-        <h2>{{ names[i] }}</h2>
-
-        <input type="hidden" id="user_name" name="user_name" value="{{ names[i] }}">
-
-        <label for="protected_peddle">Protected peddle Value</label><br>
-        <input type="number" id="protected_peddle" name="protected_peddle"><br>
-        <label for="unprotected_peddle">Unprotected peddle Value</label><br>
-        <input type="number" id="unprotected_peddle" name="unprotected_peddle"><br>
-        <label for="highest_peddle_in_hand">Highest peddle Card in Hand</label><br>
-        <input type="number" id="highest_peddle_in_hand" name="highest_peddle_in_hand"><br>
-        <br>
-
-        <input type="hidden" id="has_banker" name="has_banker" value="0">
-        <input type="checkbox" id="has_banker" name="has_banker" value="1">
-        <label for="has_banker">Banker Card</label>
-        <br>
-
-        <h3>Penalties</h3>
-        <input type="hidden" id="has_sold_out" name="has_sold_out" value="0">
-        <input type="checkbox" id="has_sold_out" name="has_sold_out" value="1">
-        <label for="has_sold_out">Sold Out Card</label><br>
-
-        <input type="hidden" id="has_double_crossed" name="has_double_crossed" value="0">
-        <input type="checkbox" id="has_double_crossed" name="has_double_crossed" value="1">
-        <label for="has_double_crossed">Doublecrossed Card</label><br>
-
-        <input type="hidden" id="has_utterly_wiped_out" name="has_utterly_wiped_out" value="0">
-        <input type="checkbox" id="has_utterly_wiped_out" name="has_utterly_wiped_out" value="1">
-        <label for="has_utterly_wiped_out">Utterly Wiped Out Card</label><br>
-        <br>
-    {%  endfor %}
-<br>
-<input type="submit" value="Submit">
-</form>
 
 </body>
 </html>

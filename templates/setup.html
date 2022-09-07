@@ -2,19 +2,34 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Setup</title>
+    <title>Grass Setup</title>
+    <link rel="stylesheet" href="static/resources/bootstrap/css/bootstrap.min.css">
 </head>
 <body>
-<h1>Game setup</h1>
-<form action = "http://127.0.0.1:5000/setup" method="POST">
-    <input type="text" name="name">
-    <input type="submit" value="Submit">
-</form>
-<h2>Users</h2>
-<ul>
-    {% for key in user_names.items() %}
-       <li> {{ key }} </li>
-    {% endfor %}
-</ul>
+<div class="container">
+    <div class="row">
+        <h2>Player Setup</h2>
+    </div>
+    <div class="row">
+        <form action = "http://127.0.0.1:5000/setup" method="POST">
+            <label for="name">Player Name</label>
+            <input type="text" class="form-control" id="name" name="name" placeholder="Player name">
+            <br>
+            <input type="submit" value="Submit">
+        </form>
+    </div>
+    <div class="col pt-3 pb-3">
+        <div class="row">
+            <h2>Users</h2>
+        </div>
+        <div class="row">
+            <ul>
+            {% for key in user_names %}
+               <li> {{ key }} </li>
+            {% endfor %}
+        </ul>
+        </div>
+    </div>
+</div>
 </body>
 </html>

@@ -208,15 +208,25 @@ class RoundTest(unittest.TestCase):
         pd.testing.assert_series_equal(input_data['net_profit'], expected['net_profit'])
 
     def test_calculate_round(self):
+        """
+        This test will not pass as the round number is not implemented. If its round 1 the net_profit can not go below 0
+        From round 2 onwards the if the net_profit goes below 0 it shoudl be removed from the scores from the
+        previous round
+        :return:
+        """
         round_information = pd.DataFrame({
-            'user_name': ['DYLAN', 'VICKY', 'DECLAN'],
-            'protected_peddle': [50000, 25000, 75000],
-            'unprotected_peddle': [45000, 50000, 5000],
-            'highest_peddle_in_hand': [5000, 50000, 25000],
-            'has_banker': [1, 0, 0],
-            'has_sold_out': [1, 0, 0],
-            'has_double_crossed': [0, 0, 0],
-            'has_utterly_wiped_out': [0, 1, 0]
+            'user_name': ['JOHN', 'JANIS', 'BOB', 'AMY'],
+            'protected_peddle': [75000, 30000, 0, 0],
+            'unprotected_peddle': [5000, 0, 5000, 175000],
+            'highest_peddle_in_hand': [0, 5000, 25000, 5000],
+            'has_banker': [0, 1, 0, 0],
+            'has_sold_out': [0, 0, 0, 0],
+            'has_double_crossed': [0, 0, 1, 0],
+            'has_utterly_wiped_out': [0, 0, 1, 0]
+        })
+        round_results = pd.DataFrame({
+            'user_name': ['JOHN', 'JANIS', 'BOB', 'AMY'],
+            'net_profit': [70000, 40000, 0, 140000]
         })
 
 
