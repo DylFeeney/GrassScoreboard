@@ -2,7 +2,7 @@ from flask import request, render_template, Blueprint
 import csv
 import pandas as pd
 from round import process_checkbox_list, get_round_number_values
-from file import generate_user_file, generate_round_info_file, generate_processed_round_info_files
+from file import generate_user_file, generate_round_info_file, generate_processed_round_info_files, generate_round_number_file
 
 
 player_setup_page = Blueprint('player_setup_page', __name__, template_folder='templates')
@@ -29,14 +29,21 @@ file_setup_page = Blueprint('file_setup_page', __name__, template_folder='templa
 def game_file_setup():
     if request.method == 'POST':
         number_of_rounds = get_round_number_values()
+
         user_file = process_checkbox_list(request.form.getlist('reset_user_file'))
         if user_file[0] == str(1):
-            print(user_file[0])
             generate_user_file()
+        round_number_file = process_checkbox_list(request.form.getlist('reset_round_number_file'))
+
+        if round_number_file[0] == str(1):
+            generate_round_number_file()
         round_info_file = process_checkbox_list(request.form.getlist('reset_round_info_file'))
+
         if round_info_file[0] == str(1):
             generate_round_info_file(number_of_rounds)
         processed_round_info_file = process_checkbox_list(request.form.getlist('reset_processed_round_info_file'))
+
         if processed_round_info_file[0] == str(1):
             generate_processed_round_info_files(number_of_rounds)
+
     return render_template('game_file_setup.html')

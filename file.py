@@ -17,7 +17,7 @@ def generate_round_number_file():
     round_number_row = ['round_number', 'round_played']
     writer.writerow(round_number_row)
     for i in range(1, 10):
-        row = [str(i), 0]
+        row = [str(i), "Not yet played"]
         writer.writerow(row)
     f.close()
 

@@ -19,8 +19,8 @@
             <div class="row pt-1 pb-1">
                 <select class="form-select" name="round_number_input">
                   <option selected>Select Round Number</option>
-                    {% for key in round_numbers %}
-                        <option value="{{key}}">{{ key }}</option>
+                    {% for key,value in round_numbers.iterrows() %}
+                        <option value="{{ value['round_number'] }}">{{ value['round_number'] }} - {{ value['round_played'] }}</option>
                     {%  endfor %}
                 </select>
             </div>

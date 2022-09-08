@@ -12,7 +12,8 @@ def round_information():
     df = pd.read_csv('game_files/user_info.csv')
     names = df['user_name']
     number_of_players = len(names)
-    round_numbers = get_round_numbers()
+    #round_numbers = get_round_numbers()
+    round_numbers = df = pd.read_csv('game_files/round_number.csv')
     if request.method == 'POST':
         round_number, user_name, protected_peddle, unprotected_peddle, highest_peddle_in_hand, has_banker, \
         has_sold_out, has_double_crossed, has_utterly_wiped_out = get_request_form_values(request)
@@ -127,11 +128,21 @@ def calculate_round(round_number):
     if banker_card_status:
         steal_money_using_banker(data, player_name)
     calculate_net_profit(data)
-    calculate_penalties(data)
-    calculate_best_peddle(data)
+    calculate_penalties(round_number, data)
+    calculate_best_peddle(round_number, data)
     calculate_bonus(data)
     write_processed_round_info(round_number, data)
+    update_round_number_file(round_number)
     return 'Calculated round'
+
+
+def update_round_number_file(round_number):
+    print(round_number)
+    file_path = "game_files/round_number.csv"
+    df = pd.read_csv(file_path, index_col='round_number')
+    updated_round_number = int(round_number) - 1
+    df.loc[df.index[updated_round_number], 'round_played'] = "Played"
+    df.to_csv(file_path)
 
 
 def read_round_information_file(round_number):
@@ -228,7 +239,7 @@ def calculate_net_profit(input_data):
     input_data['net_profit'] = net_profit
 
 
-def calculate_penalties(input_data):
+def calculate_penalties(round_number, input_data):
     """
     Calculate the penalties from players holding specific cards in their hands
     Sold Out -$25,000
@@ -245,21 +256,31 @@ def calculate_penalties(input_data):
     # Looping over the entire DataFrame from 0 to the last index number and getting the net profit for each row
     for i in range(largest_index):
         if input_data.loc[i]['has_sold_out'] == 1:
-            apply_peddle_value(input_data, i, sold_out_penalty)
+            apply_peddle_value(round_number, input_data, i, sold_out_penalty)
 
         if input_data.loc[i]['has_double_crossed'] == 1:
-            apply_peddle_value(input_data, i, double_crossed_penalty)
+            apply_peddle_value(round_number, input_data, i, double_crossed_penalty)
 
         if input_data.loc[i]['has_utterly_wiped_out'] == 1:
-            apply_peddle_value(input_data, i, utterly_wiped_out_penalty)
+            apply_peddle_value(round_number, input_data, i, utterly_wiped_out_penalty)
 
 
-def apply_peddle_value(input_data, index, new_peddle_value):
+def apply_peddle_value(round_number, input_data, index, new_peddle_value):
+    """
+    On round 1, you can not go into negative net_profit
+    From rounds 2 onwards if you go into minus, you lose money from the previous rounds net_profit
+    """
     net_profit = input_data.loc[index]['net_profit']
-    input_data.at[index, 'net_profit'] = net_profit + new_peddle_value
+    if round_number == 1:
+        net_net_profit = net_profit + new_peddle_value
+        if net_net_profit >= 0:
+            input_data.at[index, 'net_profit'] = net_net_profit
+    else:
+        #TODO: Remove the profits from the last round if the value is less then 0
+        input_data.at[index, 'net_profit'] = net_profit + new_peddle_value
 
 
-def calculate_best_peddle(input_data):
+def calculate_best_peddle(round_number, input_data):
     """
     Remove the best peddle card in each persons hand from their profit for the round
     """
@@ -271,10 +292,10 @@ def calculate_best_peddle(input_data):
         highest_peddle = input_data.loc[i]['highest_peddle_in_hand']
         # Forcing the highest_peddle value to be a negative. The value 0 will still be 0
         highest_peddle = -abs(highest_peddle)
-        apply_peddle_value(input_data, i, highest_peddle)
+        apply_peddle_value(round_number, input_data, i, highest_peddle)
 
 
-def calculate_bonus(input_data):
+def calculate_bonus(round_number, input_data):
     """
     Determine who receives the bonus of $25,000 for having the largest profit for this round
     """
@@ -302,7 +323,7 @@ def calculate_bonus(input_data):
     if max_profit_count == 1:
         # Getting the row in the DataFrame that contains the highest profit
         index = input_data.loc[input_data['net_profit'] == max_profit].index.values[0]
-        apply_peddle_value(input_data, index, max_profit_bonus)
+        apply_peddle_value(round_number, input_data, index, max_profit_bonus)
     """
     Check that the max_profit value is only in the output once (Two players do not have the same value which is 
     determined as the max_profit)
