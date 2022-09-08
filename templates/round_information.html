@@ -16,6 +16,14 @@
     </div>
     <div class="container">
         <form class="pb-5" action = "http://127.0.0.1:5000/round-information" method="POST" id="form">
+            <div class="row pt-1 pb-1">
+                <select class="form-select" name="round_number_input">
+                  <option selected>Select Round Number</option>
+                    {% for key in round_numbers %}
+                        <option value="{{key}}">{{ key }}</option>
+                    {%  endfor %}
+                </select>
+            </div>
             {% for i in range (0, number_of_players) %}
                 <div class="row">
                     <h2>{{ names[i] }}</h2>
@@ -25,17 +33,17 @@
                     <div class="col">
                         <div class="form-group">
                             <label for="protected_peddle">Protected Peddle Value</label>
-                            <input type="number" class="form-control" id="protected_peddle" name="protected_peddle" placeholder="Enter protected peddle value">
+                            <input type="number" min="0" value="0" class="form-control" id="protected_peddle" name="protected_peddle">
                         </div>
 
                         <div class="form-group">
                             <label for="unprotected_peddle">Unprotected Peddle Value</label>
-                            <input type="number" class="form-control" id="unprotected_peddle" name="unprotected_peddle" placeholder="Enter unprotected peddle value">
+                            <input type="number" min="0" value="0" class="form-control" id="unprotected_peddle" name="unprotected_peddle">
                         </div>
 
                         <div class="form-group">
                             <label for="highest_peddle_in_hand">Highest Peddle Card in Hand</label>
-                            <input type="number" class="form-control" id="highest_peddle_in_hand" name="highest_peddle_in_hand" placeholder="Enter highest peddle card in your hand">
+                            <input type="number" min="0" value="0" class="form-control" id="highest_peddle_in_hand" name="highest_peddle_in_hand">
                         </div>
                         <br>
                     </div>
@@ -60,7 +68,7 @@
                         <div class="form-check">
                             <input type="hidden" id="has_utterly_wiped_out" name="has_utterly_wiped_out" value="0">
                             <input class="form-check-input" type="checkbox" id="has_utterly_wiped_out" name="has_utterly_wiped_out" value="1">
-                            <label class="form-check-label" for="has_utterly_wiped_out">Sold Out</label>
+                            <label class="form-check-label" for="has_utterly_wiped_out">Utterly Wiped Out</label>
                         </div>
                     </div>
                 </div>

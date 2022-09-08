@@ -12,15 +12,28 @@ def round_information():
     df = pd.read_csv('game_files/user_info.csv')
     names = df['user_name']
     number_of_players = len(names)
+    round_numbers = get_round_numbers()
     if request.method == 'POST':
-        user_name, protected_peddle, unprotected_peddle, highest_peddle_in_hand, has_banker, has_sold_out, \
-        has_double_crossed, has_utterly_wiped_out = get_request_form_values(request)
-        process_round(number_of_players, user_name, protected_peddle, unprotected_peddle, highest_peddle_in_hand,
-                      has_banker, has_sold_out, has_double_crossed, has_utterly_wiped_out)
-    return render_template('round_information.html', number_of_players=number_of_players, names=names)
+        round_number, user_name, protected_peddle, unprotected_peddle, highest_peddle_in_hand, has_banker, \
+        has_sold_out, has_double_crossed, has_utterly_wiped_out = get_request_form_values(request)
+        process_round(number_of_players, round_number, user_name, protected_peddle, unprotected_peddle,
+                      highest_peddle_in_hand, has_banker, has_sold_out, has_double_crossed, has_utterly_wiped_out)
+    return render_template('round_information.html', number_of_players=number_of_players, names=names,
+                           round_numbers=round_numbers)
 
+
+def get_round_numbers():
+    df = pd.read_csv('game_files/round_number.csv')
+    round_numbers = df['round_number']
+    return round_numbers
+
+
+def get_round_number_values():
+    round_numbers = get_round_numbers()
+    return round_numbers.values
 
 def get_request_form_values(incoming_request):
+    round_number = incoming_request.form.get('round_number_input')
     user_name = incoming_request.form.getlist('user_name')
     protected_peddle = incoming_request.form.getlist('protected_peddle')
     unprotected_peddle = incoming_request.form.getlist('unprotected_peddle')
@@ -29,8 +42,8 @@ def get_request_form_values(incoming_request):
     has_sold_out = process_checkbox_list(incoming_request.form.getlist('has_sold_out'))
     has_double_crossed = process_checkbox_list(incoming_request.form.getlist('has_double_crossed'))
     has_utterly_wiped_out = process_checkbox_list(incoming_request.form.getlist('has_utterly_wiped_out'))
-    return user_name, protected_peddle, unprotected_peddle, highest_peddle_in_hand, has_banker, has_sold_out, \
-           has_double_crossed, has_utterly_wiped_out
+    return round_number, user_name, protected_peddle, unprotected_peddle, highest_peddle_in_hand, has_banker, \
+           has_sold_out, has_double_crossed, has_utterly_wiped_out
 
 
 def process_checkbox_list(input_list):
@@ -86,30 +99,30 @@ def process_checkbox_list(input_list):
     return updated_list
 
 
-def process_round(length, user_name, protected_peddle, unprotected_peddle, highest_peddle_in_hand, has_banker,
-                  has_sold_out,
-                  has_double_crossed, has_utterly_wiped_out):
-    write_round_information_to_file(length, user_name, protected_peddle, unprotected_peddle, highest_peddle_in_hand,
-                                    has_banker,
-                                    has_sold_out, has_double_crossed, has_utterly_wiped_out)
-    calculate_round()
+def process_round(length, round_number, user_name, protected_peddle, unprotected_peddle, highest_peddle_in_hand,
+                  has_banker, has_sold_out, has_double_crossed, has_utterly_wiped_out):
+    write_round_information_to_file(length, round_number, user_name, protected_peddle, unprotected_peddle,
+                                    highest_peddle_in_hand, has_banker, has_sold_out, has_double_crossed,
+                                    has_utterly_wiped_out)
+    calculate_round(round_number)
 
 
-def write_round_information_to_file(length, user_name, protected_peddle, unprotected_peddle, highest_peddle_in_hand,
-                                    has_banker,
-                                    has_sold_out, has_double_crossed, has_utterly_wiped_out):
-    with open(r'game_files/round_information_files/round_information.csv', 'a') as f:
+def write_round_information_to_file(length, round_number, user_name, protected_peddle, unprotected_peddle,
+                                    highest_peddle_in_hand, has_banker, has_sold_out, has_double_crossed,
+                                    has_utterly_wiped_out):
+    file_path = "game_files/round_information_files/round_information_" + round_number + ".csv"
+    with open(file_path, 'a') as f:
         writer = csv.writer(f, lineterminator='\n')
         for i in range(length):
-            fields = [user_name[i], protected_peddle[i], unprotected_peddle[i], highest_peddle_in_hand[i],
+            fields = [round_number, user_name[i], protected_peddle[i], unprotected_peddle[i], highest_peddle_in_hand[i],
                       has_banker[i],
                       has_sold_out[i], has_double_crossed[i], has_utterly_wiped_out[i]]
             writer.writerow(fields)
 
 
 @calculate_round_page.route('/calc')
-def calculate_round():
-    data = read_round_information_file()
+def calculate_round(round_number):
+    data = read_round_information_file(round_number)
     banker_card_status, player_name = banker_card_played(data)
     if banker_card_status:
         steal_money_using_banker(data, player_name)
@@ -117,12 +130,15 @@ def calculate_round():
     calculate_penalties(data)
     calculate_best_peddle(data)
     calculate_bonus(data)
-    write_processed_round_info(data)
+    write_processed_round_info(round_number, data)
     return 'Calculated round'
 
 
-def read_round_information_file():
-    df = pd.read_csv('game_files/round_information_files/round_information.csv')
+def read_round_information_file(round_number):
+    file_start = "game_files/round_information_files/round_information_"
+    file_end = ".csv"
+    file_path = file_start + round_number + file_end
+    df = pd.read_csv(file_path)
     return df
 
 
@@ -294,15 +310,15 @@ def calculate_bonus(input_data):
     return False
 
 
-def write_processed_round_info(input_data):
+def write_processed_round_info(round_number, input_data):
     # Get the largest index in the DataFrame to write each row to the file
     # Need to add 1 as the index is off by one without
     largest_index = input_data.index.values[-1] + 1
-    with open(r'game_files/round_processed_files/processed_round_information.csv', 'a') as f:
+    file_start = "game_files/round_processed_files/processed_round_information_"
+    file_end = ".csv"
+    file_path = file_start + round_number + file_end
+    with open(file_path, 'a') as f:
         writer = csv.writer(f, lineterminator='\n')
-        heading_row = ['user_name', 'protected_peddle', 'unprotected_peddle', 'highest_peddle_in_hand', 'has_banker',
-                       'has_sold_out', 'has_double_crossed', 'has_utterly_wiped_out', 'net_profit']
-        writer.writerow(heading_row)
         for i in range(largest_index):
             fields = [input_data.at[i, 'user_name'], input_data.at[i, 'protected_peddle'],
                       input_data.at[i, 'unprotected_peddle'], input_data.at[i, 'highest_peddle_in_hand'],
@@ -310,17 +326,3 @@ def write_processed_round_info(input_data):
                       input_data.at[i, 'has_double_crossed'], input_data.at[i, 'has_utterly_wiped_out'],
                       input_data.at[i, 'net_profit']]
             writer.writerow(fields)
-
-    print('Writing to file')
-
-
-"""
-def write_round_information_to_file(length, user_name, protected_peddle, unprotected_peddle, highest_peddle_in_hand, has_banker, has_sold_out, has_double_crossed, has_utterly_wiped_out):
-    with open(r'game_files/round_information_files/round_information.csv', 'a') as f:
-        writer = csv.writer(f, lineterminator='\n')
-        for i in range(length):
-            fields = [user_name[i], protected_peddle[i], unprotected_peddle[i], highest_peddle_in_hand[i],
-                      has_banker[i],
-                      has_sold_out[i], has_double_crossed[i], has_utterly_wiped_out[i]]
-            writer.writerow(fields)
-"""

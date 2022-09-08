@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Grass Game File Setup</title>
+    <link rel="stylesheet" href="static/resources/bootstrap/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container">
+    <div class="row mt-2 mb-2">
+        <div class="col">
+            <a href="http://127.0.0.1:5000/">
+                <button type="button" class="btn btn-secondary">Return to main menu</button>
+            </a>
+        </div>
+        <div class="col">
+            <h1>Grass Game File Setup</h1>
+        </div>
+    </div>
+    <div class="row justify-content-md-center mt-2 mb-2">
+        <form action = "http://127.0.0.1:5000/setup-files" method="POST">
+            <div class="row">
+                <div class="col">
+                    <div class="form-check">
+                        <input type="hidden" id="reset_user_file" name="reset_user_file" value="0">
+                        <input class="form-check-input" type="checkbox" id="reset_user_file" name="reset_user_file" value="1">
+                        <label class="form-check-label" for="reset_user_file">reset_user_file</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="hidden" id="reset_round_info_file" name="reset_round_info_file" value="0">
+                        <input class="form-check-input" type="checkbox" id="reset_round_info_file" name="reset_round_info_file" value="1">
+                        <label class="form-check-label" for="reset_round_info_file">reset_round_info_file</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="hidden" id="reset_processed_round_info_file" name="reset_processed_round_info_file" value="0">
+                        <input class="form-check-input" type="checkbox" id="reset_processed_round_info_file" name="reset_processed_round_info_file" value="1">
+                        <label class="form-check-label" for="reset_processed_round_info_file">reset_processed_round_info_file</label>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <button type="submit" class="btn btn-success" value="Submit">Submit file reset</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>
